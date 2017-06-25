@@ -1,4 +1,5 @@
-#Simple Printer Detection
+Simple Printer Detection
+=============
 
 Nothing fancy - just a simple script for printer detection on a network.
 
