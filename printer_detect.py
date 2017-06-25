@@ -3,7 +3,6 @@ import sys
 import socket
 import requests
 import netifaces as ni
-from contextlib import closing
 from ipaddress import ip_network
 from collections import namedtuple
 
@@ -20,14 +19,14 @@ def get_ip(ip4: str) -> ip_network:
 
 
 def check_printer(host: str, port: int = 631) -> namedtuple:
-    print = namedtuple('Printer', 'HOST Photocopier')
+    prints = namedtuple('Printer', 'HOST Photocopier')
 
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-        sock.settimeout(0.15)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(0.2)
         if sock.connect_ex((str(host), port)) == 0:
-            print_page = requests.get(f'http://{host}')
+            print_page = requests.get(f'http://{host}', verify=False)
             pc = print_page.status_code == 401 or re.search(r"fax|photocopier", print_page.text, re.IGNORECASE) is True
-            return print(host, pc)
+            return prints(host, pc)
 
 
 def printer_detect(ip4: str) -> list:
